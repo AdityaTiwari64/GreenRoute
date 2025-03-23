@@ -5,6 +5,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { logoutUser } from '../lib/firebase';
 import Link from 'next/link';
 import { useNotifications } from '../contexts/NotificationContext';
+import GreenPointsDisplay from '../components/GreenPointsDisplay';
+import ParkingForm from '../components/ParkingForm';
+import TripHistoryDisplay from '../components/TripHistoryDisplay';
+import VehicleRegistrationForm from '../components/VehicleRegistrationForm';
+import RideCompletion from '../components/RideCompletion';
+import ParkingHistoryDisplay from '../components/ParkingHistoryDisplay';
+import { useGreenPoints } from '../contexts/GreenPointsContext';
 
 // Auth wrapper component to protect routes
 const AuthCheck = ({ children }) => {
@@ -38,14 +45,20 @@ const mockOfferedRides = [
     id: 'ride-1',
     startLocationAddress: 'Downtown SF',
     destinationAddress: 'Stanford University',
+    destinationCoordinates: [37.4275, -122.1697], // Stanford coordinates
     departureTime: '2023-08-15T08:30:00',
     seatsAvailable: 2,
     seatsTotal: 4,
     vehicleType: 'Tesla Model 3',
     cost: 10,
+    distance: 37,
+    status: 'active',
+    completed: false,
+    driverId: 'current-user-id',
     bookings: [
       {
         id: 'booking-1',
+        passengerId: 'passenger-1',
         passengerName: 'Alice Johnson',
         passengerEmail: 'alice@example.com',
         passengerPhone: '555-123-4567',
@@ -54,6 +67,7 @@ const mockOfferedRides = [
       },
       {
         id: 'booking-2',
+        passengerId: 'passenger-2',
         passengerName: 'Bob Smith',
         passengerEmail: 'bob@example.com',
         passengerPhone: '555-987-6543',
@@ -66,11 +80,16 @@ const mockOfferedRides = [
     id: 'ride-2',
     startLocationAddress: 'Berkeley',
     destinationAddress: 'San Jose',
+    destinationCoordinates: [37.3382, -121.8863], // San Jose coordinates
     departureTime: '2023-08-16T17:30:00',
     seatsAvailable: 3,
     seatsTotal: 3,
     vehicleType: 'Honda Civic',
     cost: 8,
+    distance: 48,
+    status: 'pending',
+    completed: false,
+    driverId: 'current-user-id',
     bookings: [],
   },
 ];
@@ -81,11 +100,23 @@ const mockBookedRides = [
     ride: {
       id: 'ride-3',
       driver: 'Michael Chen',
+      driverId: 'driver-123',
       startLocationAddress: 'Oakland',
       destinationAddress: 'Palo Alto',
+      destinationCoordinates: [37.4419, -122.1430], // Palo Alto coordinates
       departureTime: '2023-08-17T09:00:00',
       vehicleType: 'Toyota Prius',
       cost: 7,
+      distance: 35,
+      status: 'active',
+      completed: false,
+      bookings: [
+        {
+          id: 'booking-3',
+          passengerId: 'current-user-id',
+          status: 'confirmed',
+        }
+      ]
     },
     status: 'confirmed',
     createdAt: '2023-08-15T11:20:00',
@@ -95,11 +126,17 @@ const mockBookedRides = [
     ride: {
       id: 'ride-4',
       driver: 'Sarah Williams',
+      driverId: 'driver-456',
       startLocationAddress: 'Daly City',
       destinationAddress: 'Mountain View',
+      destinationCoordinates: [37.3861, -122.0839], // Mountain View coordinates
       departureTime: '2023-08-18T07:45:00',
       vehicleType: 'Ford Escape',
       cost: 12,
+      distance: 42,
+      status: 'pending',
+      completed: false,
+      bookings: []
     },
     status: 'pending',
     createdAt: '2023-08-15T13:10:00',
@@ -129,7 +166,8 @@ const formatDate = (dateString) => {
 };
 
 export default function DashboardPage() {
-  const { getUserProfile, isAuthenticated, loading } = useAuth();
+  const { getUserProfile, isAuthenticated, loading, currentUser } = useAuth();
+  const { greenPoints } = useGreenPoints();
   const { addNotification } = useNotifications();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('rides');
@@ -139,9 +177,29 @@ export default function DashboardPage() {
   
   useEffect(() => {
     // In a real app, you would fetch this data from your backend
-    setOfferedRides(mockOfferedRides);
-    setBookedRides(mockBookedRides);
-  }, []);
+    if (!loading) {
+      // If using a real app, replace booking.ride.driverId with the actual driver ID
+      // And set the current user ID in the passenger ID fields
+      const updatedBookings = mockBookedRides.map(booking => {
+        if (booking.ride.bookings && booking.ride.bookings.length > 0) {
+          booking.ride.bookings = booking.ride.bookings.map(b => ({
+            ...b,
+            passengerId: currentUser?.uid || 'current-user-id'
+          }));
+        }
+        return booking;
+      });
+      
+      // Update offered rides to include the current user's ID as driver
+      const updatedOfferedRides = mockOfferedRides.map(ride => ({
+        ...ride,
+        driverId: currentUser?.uid || 'current-user-id'
+      }));
+      
+      setOfferedRides(updatedOfferedRides);
+      setBookedRides(updatedBookings);
+    }
+  }, [currentUser, loading]);
   
   const handleLogout = async () => {
     try {
@@ -252,12 +310,18 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="ml-auto mt-4 md:mt-0">
-                  <Link href="/profile" className="text-primary hover:text-primary/80 text-sm flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                    Edit Profile
-                  </Link>
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-green-50 rounded-lg px-4 py-3 text-center">
+                      <div className="text-xs text-green-600 font-semibold">GREEN POINTS</div>
+                      <div className="text-2xl font-bold text-green-700">{greenPoints}</div>
+                    </div>
+                    <Link href="/profile" className="text-primary hover:text-primary/80 text-sm flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                      Edit Profile
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -284,6 +348,16 @@ export default function DashboardPage() {
                   }`}
                 >
                   My Bookings
+                </button>
+                <button
+                  onClick={() => setActiveTab('greenpoints')}
+                  className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                    activeTab === 'greenpoints'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Green Points
                 </button>
               </nav>
             </div>
@@ -317,6 +391,21 @@ export default function DashboardPage() {
                                 </p>
                                 <p className="text-sm">
                                   <span className="font-medium">Cost Per Person:</span> ${ride.cost}
+                                </p>
+                                <p className="text-sm">
+                                  <span className="font-medium">Distance:</span> {ride.distance} km
+                                </p>
+                                <p className="text-sm">
+                                  <span className="font-medium">Status:</span> 
+                                  <span className={`ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                    ride.status === 'active' ? 'bg-blue-100 text-blue-800' : 
+                                    ride.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                    ride.completed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {ride.status === 'active' ? 'Active' : 
+                                     ride.status === 'pending' ? 'Pending' : 
+                                     ride.completed ? 'Completed' : 'Unknown'}
+                                  </span>
                                 </p>
                               </div>
                             </div>
@@ -411,13 +500,20 @@ export default function DashboardPage() {
                               </div>
                             </div>
                           )}
+                          
+                          {/* Add ride completion for active rides */}
+                          {ride.status === 'active' && !ride.completed && (
+                            <div className="mt-6 border-t border-gray-200 pt-4">
+                              <RideCompletion ride={ride} />
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            ) : (
+            ) : activeTab === 'bookings' ? (
               <div>
                 <h2 className="text-xl font-bold mb-4">Your Bookings</h2>
                 {bookedRides.length === 0 ? (
@@ -446,6 +542,9 @@ export default function DashboardPage() {
                                 <span className="font-medium">Cost:</span> ${booking.ride.cost}
                               </p>
                               <p className="text-sm">
+                                <span className="font-medium">Distance:</span> {booking.ride.distance} km
+                              </p>
+                              <p className="text-sm">
                                 <span className="font-medium">Booked on:</span> {formatDate(booking.createdAt)}
                               </p>
                             </div>
@@ -453,17 +552,19 @@ export default function DashboardPage() {
                           <div className="mt-4 md:mt-0 flex flex-col items-end">
                             <div className="text-right mb-2">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                                booking.status === 'confirmed' ? 
+                                  booking.ride.status === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' : 
                                 booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
                                 'bg-red-100 text-red-800'
                               }`}>
-                                {booking.status === 'confirmed' ? 'Confirmed' : 
+                                {booking.status === 'confirmed' ? 
+                                  booking.ride.status === 'active' ? 'Active Ride' : 'Confirmed' : 
                                  booking.status === 'pending' ? 'Pending Approval' : 
                                  'Declined'}
                               </span>
                             </div>
                             <div className="flex gap-2">
-                              {booking.status !== 'declined' && (
+                              {booking.status !== 'declined' && !booking.ride.completed && (
                                 <button 
                                   onClick={() => handleCancelBooking(booking.id)}
                                   className="btn btn-sm btn-danger"
@@ -482,12 +583,36 @@ export default function DashboardPage() {
                             </div>
                           </div>
                         </div>
+                        
+                        {/* Add ride completion component for active rides */}
+                        {booking.status === 'confirmed' && booking.ride.status === 'active' && !booking.ride.completed && (
+                          <RideCompletion ride={booking.ride} />
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            )}
+            ) : activeTab === 'greenpoints' ? (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Your Green Points</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-1">
+                    <div className="space-y-8">
+                      <GreenPointsDisplay />
+                      <ParkingForm />
+                    </div>
+                  </div>
+                  <div className="lg:col-span-2">
+                    <div className="space-y-8">
+                      <TripHistoryDisplay />
+                      <ParkingHistoryDisplay />
+                      <VehicleRegistrationForm />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </AuthCheck>
