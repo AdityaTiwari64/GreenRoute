@@ -3,6 +3,11 @@
 
 GreenRoute is designed to promote sustainable transportation by connecting individuals traveling in the same direction, allowing them to share rides. This approach not only reduces commuting costs but also minimizes environmental impact and fosters community connections.
 
+# Problem Statement (Why This Matters?)
+Urban transportation faces three critical challenges:
+Traffic congestion – Wasted time and increased stress.
+Excessive fuel consumption – More emissions, higher costs.
+Efficient parking & lack of EV infrastructure – Drivers struggle to find spots, and EV adoption remains slow.
 
 
 ## Feautures 
