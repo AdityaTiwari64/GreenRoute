@@ -1,13 +1,28 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { loginUser } from '../lib/firebase';
+import { useAuth } from '../contexts/AuthContext';
+import { useNotifications } from '../contexts/NotificationContext';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { addNotification } = useNotifications();
+  const [isLoading, setIsLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
   });
+
+  // Redirect if already logged in
+  if (typeof window !== 'undefined' && isAuthenticated) {
+    router.push('/dashboard');
+    return null;
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -17,11 +32,28 @@ export default function LoginPage() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, this would connect to an authentication API
-    console.log('Login attempt:', formData);
-    alert('Login functionality would be implemented in a real application.');
+    setIsLoading(true);
+    
+    try {
+      const { user, error } = await loginUser(formData.email, formData.password);
+      
+      if (error) {
+        addNotification(`Login failed: ${error}`, 'error');
+        console.error('Login error:', error);
+      } else {
+        addNotification('Successfully logged in!', 'success');
+        // Redirect to dashboard or the page they were trying to access
+        const redirectTo = router.query.redirect || '/dashboard';
+        router.push(redirectTo);
+      }
+    } catch (error) {
+      addNotification(`Error during login: ${error.message}`, 'error');
+      console.error('Login exception:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -90,10 +122,11 @@ export default function LoginPage() {
 
               <div className="mb-6">
                 <button
-                  className="btn btn-primary w-full"
+                  className={`btn btn-primary w-full ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                   type="submit"
+                  disabled={isLoading}
                 >
-                  Sign In
+                  {isLoading ? 'Signing In...' : 'Sign In'}
                 </button>
               </div>
 
@@ -121,6 +154,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  onClick={() => addNotification('Google sign-in not configured in this demo', 'info')}
                 >
                   <span className="sr-only">Sign in with Google</span>
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -131,6 +165,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  onClick={() => addNotification('Facebook sign-in not configured in this demo', 'info')}
                 >
                   <span className="sr-only">Sign in with Facebook</span>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

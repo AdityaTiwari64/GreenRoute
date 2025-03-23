@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -14,28 +14,54 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41],
 });
 
+// Earth-toned icons
 const userLocationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png',
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/6676/6676032.png', // Blue person marker
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
 
 const startLocationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/484/484167.png',
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3711/3711245.png', // Green leaf marker
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
 
 const destinationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1077/1077012.png',
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png', // Earthy location marker
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
 
-L.Marker.prototype.options.icon = defaultIcon;
+// Ensure Leaflet default icon is set
+if (typeof L !== 'undefined') {
+  L.Marker.prototype.options.icon = defaultIcon;
+}
+
+// Function to safely format dates
+const formatDate = (dateString) => {
+  try {
+    const date = new Date(dateString);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    // Format date in a consistent way to avoid hydration errors
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch (e) {
+    console.error('Date formatting error:', e);
+    return 'Invalid date';
+  }
+};
 
 // Mock data for available carpools
 const mockCarpools = [
@@ -73,27 +99,36 @@ function LocationMarker() {
   const [position, setPosition] = useState(null);
   const [accuracy, setAccuracy] = useState(0);
   const [loading, setLoading] = useState(true);
+  const mapRef = useRef(null);
   const map = useMap();
+  
+  mapRef.current = map;
 
   useEffect(() => {
     // Get user's current location
+    let isMounted = true;
+    
     if (navigator.geolocation) {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude, accuracy } = position.coords;
-          const userLocation = [latitude, longitude];
-          setPosition(userLocation);
-          setAccuracy(accuracy);
-          map.flyTo(userLocation, 14);
-          setLoading(false);
+          if (isMounted && mapRef.current) {
+            const { latitude, longitude, accuracy } = position.coords;
+            const userLocation = [latitude, longitude];
+            setPosition(userLocation);
+            setAccuracy(accuracy);
+            mapRef.current.flyTo(userLocation, 14);
+            setLoading(false);
+          }
         },
         (error) => {
           console.error('Error getting location:', error);
           // Use default location if geolocation fails
-          setPosition([51.505, -0.09]); // London center
-          map.flyTo([51.505, -0.09], 12);
-          setLoading(false);
+          if (isMounted && mapRef.current) {
+            setPosition([51.505, -0.09]); // London center
+            mapRef.current.flyTo([51.505, -0.09], 12);
+            setLoading(false);
+          }
         },
         {
           enableHighAccuracy: true,
@@ -103,11 +138,17 @@ function LocationMarker() {
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
-      setPosition([51.505, -0.09]); // London center
-      map.flyTo([51.505, -0.09], 12);
-      setLoading(false);
+      if (isMounted && mapRef.current) {
+        setPosition([51.505, -0.09]); // London center
+        mapRef.current.flyTo([51.505, -0.09], 12);
+        setLoading(false);
+      }
     }
-  }, [map]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return position === null ? null : (
     <>
@@ -121,17 +162,21 @@ function LocationMarker() {
       <Circle
         center={position}
         radius={accuracy}
-        pathOptions={{ fillColor: 'blue', fillOpacity: 0.1, weight: 1, color: 'blue' }}
+        pathOptions={{ fillColor: '#5f8d4e', fillOpacity: 0.1, weight: 1, color: '#5f8d4e' }}
       />
     </>
   );
 }
 
-export default function CarpoolMap({ carpools = [] }) {
+export default function CarpoolMap({ carpools = [], onBookRide }) {
   // Combine mock data with passed carpools
   const [allCarpools, setAllCarpools] = useState([]);
+  const [isClient, setIsClient] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
   
   useEffect(() => {
+    setIsClient(true);
+    
     // Use mock data initially or when no carpools are provided
     if (carpools.length === 0) {
       setAllCarpools(mockCarpools);
@@ -139,6 +184,13 @@ export default function CarpoolMap({ carpools = [] }) {
       // Combine mock data with provided carpools
       setAllCarpools([...mockCarpools, ...carpools]);
     }
+    
+    // Ensure the map container is ready
+    const timer = setTimeout(() => {
+      setMapReady(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [carpools]);
 
   // Function to open Google Maps with directions
@@ -147,16 +199,28 @@ export default function CarpoolMap({ carpools = [] }) {
     window.open(url, '_blank');
   };
 
+  // Don't render map on server side
+  if (!isClient || !mapReady) {
+    return <div className="h-full w-full bg-tertiary/20 flex items-center justify-center">Loading map...</div>;
+  }
+
   return (
-    <>
+    <div className="h-full w-full" style={{ minHeight: '400px' }}>
       <MapContainer
+        key="carpool-map"
         center={[51.505, -0.09]} // Default center, will be updated by LocationMarker
         zoom={12}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', minHeight: '400px' }}
+        whenCreated={(map) => {
+          // Force a map container update to fix initial rendering issues
+          setTimeout(() => {
+            map.invalidateSize();
+          }, 0);
+        }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38"
         />
         
         {/* User location marker and circle */}
@@ -185,7 +249,7 @@ export default function CarpoolMap({ carpools = [] }) {
                     <p className="text-sm font-semibold">Pickup Point</p>
                     <p className="text-xs">{carpool.startLocationAddress || 'Start location'}</p>
                     <p className="text-sm">
-                      Departure: {new Date(carpool.departureTime).toLocaleString()} <br />
+                      Departure: {formatDate(carpool.departureTime)} <br />
                       Seats available: {carpool.seatsAvailable} <br />
                       {carpool.costPerPerson && `Cost: ${carpool.costPerPerson}`}
                     </p>
@@ -201,9 +265,21 @@ export default function CarpoolMap({ carpools = [] }) {
                       >
                         View route in Google Maps
                       </button>
-                      <button className="bg-secondary text-white text-xs py-1 px-2 rounded hover:bg-secondary/90 w-full">
-                        Request seat
-                      </button>
+                      {onBookRide && carpool.seatsAvailable > 0 && (
+                        <button 
+                          className="bg-accent text-white text-xs py-1 px-2 rounded hover:bg-accent/90 w-full"
+                          onClick={(e) => {
+                            // Prevent popup from closing when clicking the button
+                            e.stopPropagation();
+                            onBookRide(carpool);
+                          }}
+                        >
+                          Book Seat
+                        </button>
+                      )}
+                      {carpool.seatsAvailable <= 0 && (
+                        <p className="text-gray-500 text-xs text-center mt-1">Fully booked</p>
+                      )}
                     </div>
                   </div>
                 </Popup>
@@ -219,17 +295,31 @@ export default function CarpoolMap({ carpools = [] }) {
                     <h3 className="font-bold">{carpool.driver || 'Driver'}</h3>
                     <p className="text-sm font-semibold">Destination</p>
                     <p className="text-xs">{carpool.destinationAddress || 'Destination location'}</p>
-                    <button 
-                      className="bg-primary text-white text-xs py-1 px-2 rounded hover:bg-primary/90 w-full mt-2"
-                      onClick={() => openGoogleMapsDirections(
-                        startLocation[0],
-                        startLocation[1],
-                        destination[0],
-                        destination[1]
+                    <div className="flex flex-col gap-2 mt-2">
+                      <button 
+                        className="bg-primary text-white text-xs py-1 px-2 rounded hover:bg-primary/90 w-full"
+                        onClick={() => openGoogleMapsDirections(
+                          startLocation[0],
+                          startLocation[1],
+                          destination[0],
+                          destination[1]
+                        )}
+                      >
+                        View route in Google Maps
+                      </button>
+                      {onBookRide && carpool.seatsAvailable > 0 && (
+                        <button 
+                          className="bg-accent text-white text-xs py-1 px-2 rounded hover:bg-accent/90 w-full"
+                          onClick={(e) => {
+                            // Prevent popup from closing when clicking the button
+                            e.stopPropagation();
+                            onBookRide(carpool);
+                          }}
+                        >
+                          Book Seat
+                        </button>
                       )}
-                    >
-                      View route in Google Maps
-                    </button>
+                    </div>
                   </div>
                 </Popup>
               </Marker>
@@ -237,6 +327,6 @@ export default function CarpoolMap({ carpools = [] }) {
           );
         })}
       </MapContainer>
-    </>
+    </div>
   );
 } 

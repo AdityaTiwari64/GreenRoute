@@ -7,9 +7,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#16a34a',
-        secondary: '#0ea5e9',
-        dark: '#1e293b',
+        primary: '#5f8d4e',    // Forest green
+        secondary: '#a4be7b',  // Sage green
+        tertiary: '#e5d9b6',   // Wheat
+        dark: '#285430',       // Deep forest green
+        light: '#fefae0',      // Cream
+        accent: '#bc6c25',     // Terracotta
       },
     },
   },

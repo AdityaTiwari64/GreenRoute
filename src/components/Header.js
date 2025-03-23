@@ -12,7 +12,7 @@ export default function Header() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="text-primary font-bold text-xl">EcoCommute</span>
+              <span className="text-primary font-bold text-xl">GreenRoute</span>
             </Link>
             <nav className="ml-6 flex space-x-8">
               <Link href="/" 

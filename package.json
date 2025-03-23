@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase": "^11.5.0",
     "leaflet": "^1.9.4",
     "next": "^15.2.3",
     "react": "^19.0.0",

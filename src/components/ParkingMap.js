@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -28,7 +28,10 @@ const userLocationIcon = L.icon({
   popupAnchor: [0, -32],
 });
 
-L.Marker.prototype.options.icon = defaultIcon;
+// Ensure Leaflet default icon is set
+if (typeof L !== 'undefined') {
+  L.Marker.prototype.options.icon = defaultIcon;
+}
 
 // Mock data for available parking spaces
 const mockParkingSpots = [
@@ -89,27 +92,36 @@ function LocationMarker() {
   const [position, setPosition] = useState(null);
   const [accuracy, setAccuracy] = useState(0);
   const [loading, setLoading] = useState(true);
+  const mapRef = useRef(null);
   const map = useMap();
+  
+  mapRef.current = map;
 
   useEffect(() => {
     // Get user's current location
+    let isMounted = true;
+    
     if (navigator.geolocation) {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude, accuracy } = position.coords;
-          const userLocation = [latitude, longitude];
-          setPosition(userLocation);
-          setAccuracy(accuracy);
-          map.flyTo(userLocation, 14);
-          setLoading(false);
+          if (isMounted && mapRef.current) {
+            const { latitude, longitude, accuracy } = position.coords;
+            const userLocation = [latitude, longitude];
+            setPosition(userLocation);
+            setAccuracy(accuracy);
+            mapRef.current.flyTo(userLocation, 14);
+            setLoading(false);
+          }
         },
         (error) => {
           console.error('Error getting location:', error);
           // Use default location if geolocation fails
-          setPosition([51.505, -0.09]); // London center
-          map.flyTo([51.505, -0.09], 12);
-          setLoading(false);
+          if (isMounted && mapRef.current) {
+            setPosition([51.505, -0.09]); // London center
+            mapRef.current.flyTo([51.505, -0.09], 12);
+            setLoading(false);
+          }
         },
         {
           enableHighAccuracy: true,
@@ -119,11 +131,17 @@ function LocationMarker() {
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
-      setPosition([51.505, -0.09]); // London center
-      map.flyTo([51.505, -0.09], 12);
-      setLoading(false);
+      if (isMounted && mapRef.current) {
+        setPosition([51.505, -0.09]); // London center
+        mapRef.current.flyTo([51.505, -0.09], 12);
+        setLoading(false);
+      }
     }
-  }, [map]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return position === null ? null : (
     <>
@@ -144,6 +162,32 @@ function LocationMarker() {
 }
 
 export default function ParkingMap() {
+  const [isClient, setIsClient] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
+  const containerRef = useRef(null);
+  
+  useEffect(() => {
+    setIsClient(true);
+    
+    // Ensure the map container is ready
+    const timer = setTimeout(() => {
+      setMapReady(true);
+      
+      // Force the map to update its size if container exists
+      if (containerRef.current) {
+        const mapElement = containerRef.current.querySelector('.leaflet-container');
+        if (mapElement && mapElement._leaflet_id) {
+          const map = L.DomUtil.get(mapElement)._leaflet_map;
+          if (map) {
+            map.invalidateSize();
+          }
+        }
+      }
+    }, 200);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   // Color availability indicator
   const getAvailabilityColor = (available, total) => {
     const ratio = available / total;
@@ -174,73 +218,91 @@ export default function ParkingMap() {
     }
   };
 
+  // Don't render map on server side
+  if (!isClient || !mapReady) {
+    return <div className="h-full w-full bg-tertiary/20 flex items-center justify-center">Loading map...</div>;
+  }
+
   return (
-    <MapContainer 
-      center={[51.505, -0.09]} // Default center, will be updated by LocationMarker
-      zoom={13} 
-      style={{ height: '100%', width: '100%' }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      
-      {/* User location marker */}
-      <LocationMarker />
-      
-      {/* Parking spots */}
-      {mockParkingSpots.map((spot) => (
-        <div key={spot.id}>
-          <Circle
-            center={spot.location}
-            radius={100}
-            pathOptions={{
-              fillColor: getAvailabilityColor(spot.availableSpaces, spot.totalSpaces),
-              fillOpacity: 0.3,
-              color: getAvailabilityColor(spot.availableSpaces, spot.totalSpaces),
-              weight: 1,
-            }}
-          />
-          <Marker position={spot.location} icon={parkingIcon}>
-            <Popup>
-              <div className="min-w-[200px]">
-                <h3 className="font-bold text-base">{spot.name}</h3>
-                <div className="mt-2 flex flex-col space-y-1 text-sm">
-                  <p>
-                    <span className="font-semibold">Availability:</span>{' '}
-                    <span className={spot.availableSpaces === 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>
-                      {spot.availableSpaces === 0
-                        ? 'Full'
-                        : `${spot.availableSpaces} / ${spot.totalSpaces} spots`}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Price:</span> {spot.pricePerHour}/hour
-                  </p>
-                  <p>
-                    <span className="font-semibold">Features:</span>
-                    {spot.hasEVCharging && <span className="ml-1 text-green-600">EV Charging</span>}
-                    {spot.hasHandicapSpots && <span className="ml-1 text-blue-600"> • Handicap Spots</span>}
-                  </p>
-                </div>
-                <div className="mt-3 flex flex-col gap-2">
-                  <button 
-                    className="bg-primary text-white text-xs py-1 px-2 rounded hover:bg-primary/90 w-full"
-                    onClick={() => navigateToParkingSpot(spot.location[0], spot.location[1])}
-                  >
-                    Navigate in Google Maps
-                  </button>
-                  {spot.availableSpaces > 0 && (
-                    <button className="bg-secondary text-white text-xs py-1 px-2 rounded hover:bg-secondary/90 w-full">
-                      Reserve a spot
+    <div className="h-full w-full" style={{ minHeight: '500px' }} ref={containerRef}>
+      <MapContainer 
+        key="parking-map"
+        center={[51.505, -0.09]} // Default center, will be updated by LocationMarker
+        zoom={13} 
+        style={{ height: '100%', width: '100%', minHeight: '500px' }}
+        whenCreated={(map) => {
+          // Force a map container update to fix initial rendering issues
+          setTimeout(() => {
+            map.invalidateSize();
+          }, 200);
+        }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38"
+        />
+        
+        {/* User location marker */}
+        <LocationMarker />
+        
+        {/* Parking spots */}
+        {mockParkingSpots.map((spot) => (
+          <div key={spot.id}>
+            <Circle
+              center={spot.location}
+              radius={100}
+              pathOptions={{
+                fillColor: getAvailabilityColor(spot.availableSpaces, spot.totalSpaces),
+                fillOpacity: 0.3,
+                color: getAvailabilityColor(spot.availableSpaces, spot.totalSpaces),
+                weight: 1,
+              }}
+            />
+            
+            <Marker 
+              position={spot.location}
+              icon={parkingIcon}
+            >
+              <Popup>
+                <div className="min-w-[200px]">
+                  <h3 className="font-bold text-base">{spot.name}</h3>
+                  <div className="mt-2 flex flex-col space-y-1 text-sm">
+                    <p>
+                      <span className="font-semibold">Availability:</span>{' '}
+                      <span className={spot.availableSpaces === 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>
+                        {spot.availableSpaces === 0
+                          ? 'Full'
+                          : `${spot.availableSpaces} / ${spot.totalSpaces} spots`}
+                      </span>
+                    </p>
+                    <p>
+                      <span className="font-semibold">Price:</span> {spot.pricePerHour}/hour
+                    </p>
+                    <p>
+                      <span className="font-semibold">Features:</span>
+                      {spot.hasEVCharging && <span className="ml-1 text-green-600">EV Charging</span>}
+                      {spot.hasHandicapSpots && <span className="ml-1 text-blue-600"> • Handicap Spots</span>}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex flex-col gap-2">
+                    <button 
+                      className="bg-primary text-white text-xs py-1 px-2 rounded hover:bg-primary/90 w-full"
+                      onClick={() => navigateToParkingSpot(spot.location[0], spot.location[1])}
+                    >
+                      Navigate in Google Maps
                     </button>
-                  )}
+                    {spot.availableSpaces > 0 && (
+                      <button className="bg-secondary text-white text-xs py-1 px-2 rounded hover:bg-secondary/90 w-full">
+                        Reserve a spot
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        </div>
-      ))}
-    </MapContainer>
+              </Popup>
+            </Marker>
+          </div>
+        ))}
+      </MapContainer>
+    </div>
   );
 } 
