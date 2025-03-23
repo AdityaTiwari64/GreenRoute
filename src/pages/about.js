@@ -7,7 +7,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl font-bold text-dark">About EcoCommute</h1>
+            <h1 className="text-3xl font-bold text-dark">About Green Route</h1>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
               Our mission is to create sustainable transportation solutions that reduce carbon emissions and make commuting more efficient.
             </p>
@@ -17,7 +17,7 @@ export default function AboutPage() {
           <div className="bg-white rounded-lg shadow-md p-8 mb-10">
             <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
             <p className="text-gray-700 mb-4">
-              At EcoCommute, we envision a world where transportation is sustainable, efficient, and community-focused. 
+              At Green Route, we envision a world where transportation is sustainable, efficient, and community-focused. 
               We believe that by optimizing daily commutes through carpooling and smart parking, we can significantly 
               reduce carbon emissions while building stronger communities.
             </p>
@@ -71,7 +71,7 @@ export default function AboutPage() {
 
           {/* How It Works */}
           <div className="bg-white rounded-lg shadow-md p-8 mb-10">
-            <h2 className="text-2xl font-bold mb-6">How EcoCommute Works</h2>
+            <h2 className="text-2xl font-bold mb-6">How Green Route Works</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-xl font-semibold mb-3">Carpooling</h3>
@@ -101,7 +101,7 @@ export default function AboutPage() {
           <div className="bg-white rounded-lg shadow-md p-8 mb-10">
             <h2 className="text-2xl font-bold mb-6">Our Team</h2>
             <p className="text-gray-700 mb-6">
-              EcoCommute was founded by a passionate team of environmental advocates, transportation experts, and technology innovators. 
+              Green Route was founded by a passionate team of environmental advocates, transportation experts, and technology innovators. 
               We share a common goal of making sustainable transportation accessible and appealing to everyone.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -130,7 +130,7 @@ export default function AboutPage() {
               <h2 className="text-2xl font-bold text-white mb-4">Join the Sustainable Transportation Movement</h2>
               <p className="text-gray-300 max-w-2xl mx-auto mb-8">
                 Be part of the solution to reduce carbon emissions, traffic congestion, and parking stress. 
-                Join EcoCommute today and start making a positive impact on our environment.
+                Join Green Route today and start making a positive impact on our environment.
               </p>
               <div className="flex flex-col md:flex-row justify-center gap-4">
                 <a href="/register" className="btn bg-white text-dark hover:bg-gray-100">

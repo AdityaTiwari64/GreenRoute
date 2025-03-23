@@ -87,7 +87,7 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-dark">Sign In</h1>
             <p className="mt-2 text-gray-600">
-              Welcome back! Sign in to your EcoCommute account.
+              Welcome back! Sign in to your Green Route account.
             </p>
           </div>
 

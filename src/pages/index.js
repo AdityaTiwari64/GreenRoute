@@ -14,7 +14,7 @@ export default function Home() {
                 Sustainable Transportation for a Greener Future
               </h1>
               <p className="mt-4 text-lg text-white/90">
-                EcoCommute helps you reduce your carbon footprint through optimized carpooling and smart parking solutions.
+                Green Route helps you reduce your carbon footprint through optimized carpooling and smart parking solutions.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/carpool" className="btn bg-white text-primary hover:bg-gray-100">
@@ -46,7 +46,7 @@ export default function Home() {
           <div className="text-center">
             <h2 className="text-3xl font-bold text-dark">Our Features</h2>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-              EcoCommute provides innovative solutions to make your daily commute more efficient and eco-friendly.
+              Green Route provides innovative solutions to make your daily commute more efficient and eco-friendly.
             </p>
           </div>
 

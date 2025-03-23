@@ -27,7 +27,7 @@ export const sendEmail = async (to, subject, content) => {
 
 export const generateBookingConfirmationEmail = (booking) => {
   return {
-    subject: `EcoCommute: Your ride with ${booking.ride.driver} is confirmed!`,
+    subject: `Green Route: Your ride with ${booking.ride.driver} is confirmed!`,
     content: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
         <h2 style="color: #5f8d4e;">Your Ride is Confirmed!</h2>
@@ -47,7 +47,7 @@ export const generateBookingConfirmationEmail = (booking) => {
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
           <p style="color: #666; font-size: 12px;">
-            Thank you for using EcoCommute! By carpooling, you're helping reduce carbon emissions and making our planet greener.
+            Thank you for using Green Route! By carpooling, you're helping reduce carbon emissions and making our planet greener.
           </p>
         </div>
       </div>
@@ -57,7 +57,7 @@ export const generateBookingConfirmationEmail = (booking) => {
 
 export const generateBookingNotificationToDriver = (booking) => {
   return {
-    subject: `EcoCommute: New passenger for your ride on ${new Date(booking.ride.departureTime).toLocaleDateString()}`,
+    subject: `Green Route: New passenger for your ride on ${new Date(booking.ride.departureTime).toLocaleDateString()}`,
     content: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
         <h2 style="color: #5f8d4e;">New Ride Booking!</h2>
@@ -77,7 +77,7 @@ export const generateBookingNotificationToDriver = (booking) => {
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
           <p style="color: #666; font-size: 12px;">
-            Thank you for using EcoCommute and sharing your ride! Together we're reducing traffic and emissions.
+            Thank you for using Green Route and sharing your ride! Together we're reducing traffic and emissions.
           </p>
         </div>
       </div>

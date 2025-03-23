@@ -97,7 +97,7 @@ export default function RegisterPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-dark">Create Account</h1>
             <p className="mt-2 text-gray-600">
-              Join EcoCommute today and start your sustainable commuting journey.
+              Join Green Route today and start your sustainable commuting journey.
             </p>
           </div>
 
