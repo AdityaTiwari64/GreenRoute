@@ -15,30 +15,58 @@ const defaultIcon = L.icon({
 });
 
 // Earth-toned icons
-const userLocationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/6676/6676032.png', // Blue person marker
+const userLocationIcon = L.divIcon({
+  html: `<svg viewBox="0 0 24 24" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="11" fill="#3B82F6" stroke="white" stroke-width="2"/>
+    <circle cx="12" cy="9" r="3" fill="white"/>
+    <path d="M18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  </svg>`,
+  className: "custom-div-icon",
   iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16],
 });
 
-const startLocationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3711/3711245.png', // Green leaf marker
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
+const startLocationIcon = L.divIcon({
+  html: `<svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 1C7.05 1 3 5.05 3 10C3 16.25 12 23 12 23C12 23 21 16.25 21 10C21 5.05 16.95 1 12 1Z" fill="#10B981" stroke="white" stroke-width="2"/>
+    <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" fill="white"/>
+  </svg>`,
+  className: "custom-div-icon",
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36],
 });
 
-const destinationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png', // Earthy location marker
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
+const destinationIcon = L.divIcon({
+  html: `<svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 1C7.05 1 3 5.05 3 10C3 16.25 12 23 12 23C12 23 21 16.25 21 10C21 5.05 16.95 1 12 1Z" fill="#EF4444" stroke="white" stroke-width="2"/>
+    <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" fill="white"/>
+    <circle cx="12" cy="10" r="6" fill="#EF4444" stroke="white" stroke-width="1.5"/>
+    <path d="M15 10C15 11.6569 13.6569 13 12 13C10.3431 13 9 11.6569 9 10C9 8.34315 10.3431 7 12 7C13.6569 7 15 8.34315 15 10Z" fill="white"/>
+  </svg>`,
+  className: "custom-div-icon",
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36],
 });
 
 // Ensure Leaflet default icon is set
 if (typeof L !== 'undefined') {
   L.Marker.prototype.options.icon = defaultIcon;
+  
+  // Add CSS for custom markers
+  if (typeof document !== 'undefined') {
+    // Only run in browser environment
+    const style = document.createElement('style');
+    style.textContent = `
+      .custom-div-icon {
+        background: none;
+        border: none;
+      }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 // Function to safely format dates

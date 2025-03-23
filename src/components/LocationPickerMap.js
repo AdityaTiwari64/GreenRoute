@@ -4,18 +4,34 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // Fix Leaflet marker icon issue
-const defaultIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3711/3711245.png',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  shadowSize: [41, 41],
+const defaultIcon = L.divIcon({
+  html: `<svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 1C7.05 1 3 5.05 3 10C3 16.25 12 23 12 23C12 23 21 16.25 21 10C21 5.05 16.95 1 12 1Z" fill="#10B981" stroke="white" stroke-width="2"/>
+    <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" fill="white"/>
+    <circle cx="12" cy="13" r="1.5" fill="#10B981"/>
+  </svg>`,
+  className: "custom-div-icon",
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36],
 });
 
 // Ensure Leaflet default icon is set
 if (typeof L !== 'undefined') {
   L.Marker.prototype.options.icon = defaultIcon;
+  
+  // Add CSS for custom markers
+  if (typeof document !== 'undefined') {
+    // Only run in browser environment
+    const style = document.createElement('style');
+    style.textContent = `
+      .custom-div-icon {
+        background: none;
+        border: none;
+      }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 // Component to handle location selection on map

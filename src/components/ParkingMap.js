@@ -14,23 +14,46 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41],
 });
 
-const parkingIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/494/494586.png',
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
-  popupAnchor: [0, -30],
+const parkingIcon = L.divIcon({
+  html: `<svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="4" fill="#6366F1" stroke="white" stroke-width="2"/>
+    <path d="M12 5V19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <path d="M8 12H16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  </svg>`,
+  className: "custom-div-icon",
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+  popupAnchor: [0, -18],
 });
 
-const userLocationIcon = L.icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png',
+const userLocationIcon = L.divIcon({
+  html: `<svg viewBox="0 0 24 24" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="11" fill="#3B82F6" stroke="white" stroke-width="2"/>
+    <circle cx="12" cy="9" r="3" fill="white"/>
+    <path d="M18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  </svg>`,
+  className: "custom-div-icon",
   iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16],
 });
 
 // Ensure Leaflet default icon is set
 if (typeof L !== 'undefined') {
   L.Marker.prototype.options.icon = defaultIcon;
+  
+  // Add CSS for custom markers
+  if (typeof document !== 'undefined') {
+    // Only run in browser environment
+    const style = document.createElement('style');
+    style.textContent = `
+      .custom-div-icon {
+        background: none;
+        border: none;
+      }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 // Mock data for available parking spaces
