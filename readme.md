@@ -1,6 +1,6 @@
-# EcoCommute: Sustainable Transportation Solution
+# GreenRoute: Sustainable Transportation Solution
 
-EcoCommute is a web application focused on making daily transportation more sustainable and efficient through carpooling optimization and smart parking solutions.
+GreenRoute is a web application focused on making daily transportation more sustainable and efficient through carpooling optimization and smart parking solutions.
 
 ## Features
 
@@ -54,7 +54,7 @@ yarn dev
 
 ## Environmental Impact
 
-EcoCommute helps reduce carbon emissions in two key ways:
+GreenRoute helps reduce carbon emissions in two key ways:
 
 1. **Carpooling**: Each shared ride can reduce carbon emissions by up to 1kg CO2 per km compared to individual trips.
 2. **Smart Parking**: Reducing time spent searching for parking decreases fuel consumption and emissions.
@@ -69,7 +69,7 @@ EcoCommute helps reduce carbon emissions in two key ways:
 
 ## Contributing
 
-We welcome contributions to make EcoCommute even better! Please feel free to submit issues and pull requests.
+We welcome contributions to make GreenRoute even better! Please feel free to submit issues and pull requests.
 
 ## License
 
