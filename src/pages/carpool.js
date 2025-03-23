@@ -588,7 +588,7 @@ export default function CarpoolPage() {
                     
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="costPerPerson">
-                        Cost Per Person ($) (Optional)
+                        Cost Per Person (₹) (Optional)
                       </label>
                       <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -886,7 +886,7 @@ export default function CarpoolPage() {
               </div>
               
               <p className="text-xs text-gray-500 text-center">
-                By booking this ride, you agree to EcoCommute's Terms of Service and Privacy Policy.
+                By booking this ride, you agree to Green Route's Terms of Service and Privacy Policy.
               </p>
             </form>
           </div>
