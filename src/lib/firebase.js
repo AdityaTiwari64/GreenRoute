@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -19,7 +19,7 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getFirestore(app);
 const auth = getAuth(app);
-export const GoogleProvider =new GoogleAuthProvider(app);
+export const GoogleProvider = new GoogleAuthProvider();
 export { app, auth, db };
 
 // Authentication helper functions
@@ -47,6 +47,15 @@ export const logoutUser = async () => {
     return { success: true, error: null };
   } catch (error) {
     return { success: false, error: error.message };
+  }
+};
+export const signinwithgoogle = async () => {
+  try{
+    const result = await signInWithPopup(auth, GoogleProvider);
+    return { user: result.user, error: null };
+  } catch (err){
+    console.log(err);
+    return { user: null, error: err.message };
   }
 };
 
