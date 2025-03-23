@@ -39,7 +39,7 @@ export const generateBookingConfirmationEmail = (booking) => {
           <p><strong>From:</strong> ${booking.ride.startLocationAddress}</p>
           <p><strong>To:</strong> ${booking.ride.destinationAddress}</p>
           <p><strong>Departure:</strong> ${new Date(booking.ride.departureTime).toLocaleString()}</p>
-          <p><strong>Cost:</strong> ${booking.ride.costPerPerson || 'Free'}</p>
+          <p><strong>Cost:</strong> ${booking.ride.costPerPerson?.replace('$', '₹') || 'Free'}</p>
         </div>
         
         <p>The driver has been notified of your booking and will contact you if needed.</p>

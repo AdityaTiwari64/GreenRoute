@@ -390,7 +390,7 @@ export default function DashboardPage() {
                                   <span className="font-medium">Available Seats:</span> {ride.seatsAvailable} of {ride.seatsTotal}
                                 </p>
                                 <p className="text-sm">
-                                  <span className="font-medium">Cost Per Person:</span> ${ride.cost}
+                                  <span className="font-medium">Cost Per Person:</span> ₹{ride.cost}
                                 </p>
                                 <p className="text-sm">
                                   <span className="font-medium">Distance:</span> {ride.distance} km
@@ -539,7 +539,7 @@ export default function DashboardPage() {
                                 <span className="font-medium">Vehicle:</span> {booking.ride.vehicleType}
                               </p>
                               <p className="text-sm">
-                                <span className="font-medium">Cost:</span> ${booking.ride.cost}
+                                <span className="font-medium">Cost:</span> ₹{booking.ride.cost}
                               </p>
                               <p className="text-sm">
                                 <span className="font-medium">Distance:</span> {booking.ride.distance} km

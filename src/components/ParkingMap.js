@@ -41,7 +41,7 @@ const mockParkingSpots = [
     location: [51.505, -0.09],
     availableSpaces: 15,
     totalSpaces: 120,
-    pricePerHour: '$2.50',
+    pricePerHour: '₹2.50',
     hasEVCharging: true,
     hasHandicapSpots: true,
   },
@@ -51,7 +51,7 @@ const mockParkingSpots = [
     location: [51.51, -0.1],
     availableSpaces: 5,
     totalSpaces: 50,
-    pricePerHour: '$3.00',
+    pricePerHour: '₹3.00',
     hasEVCharging: false,
     hasHandicapSpots: true,
   },
@@ -61,7 +61,7 @@ const mockParkingSpots = [
     location: [51.498, -0.085],
     availableSpaces: 30,
     totalSpaces: 80,
-    pricePerHour: '$2.00',
+    pricePerHour: '₹2.00',
     hasEVCharging: true,
     hasHandicapSpots: true,
   },
@@ -71,7 +71,7 @@ const mockParkingSpots = [
     location: [51.515, -0.12],
     availableSpaces: 8,
     totalSpaces: 150,
-    pricePerHour: '$4.00',
+    pricePerHour: '₹4.00',
     hasEVCharging: true,
     hasHandicapSpots: true,
   },
@@ -81,7 +81,7 @@ const mockParkingSpots = [
     location: [51.52, -0.095],
     availableSpaces: 0, // Full
     totalSpaces: 35,
-    pricePerHour: '$1.50',
+    pricePerHour: '₹1.50',
     hasEVCharging: false,
     hasHandicapSpots: false,
   },
@@ -276,7 +276,7 @@ export default function ParkingMap() {
                       </span>
                     </p>
                     <p>
-                      <span className="font-semibold">Price:</span> {spot.pricePerHour}/hour
+                      <span className="font-semibold">Price:</span> {spot.pricePerHour.replace('$', '₹')}/hour
                     </p>
                     <p>
                       <span className="font-semibold">Features:</span>

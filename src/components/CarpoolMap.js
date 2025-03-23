@@ -72,7 +72,7 @@ const mockCarpools = [
     destination: [51.51, -0.1],
     departureTime: '2023-07-25T08:30',
     seatsAvailable: 3,
-    costPerPerson: '$5',
+    costPerPerson: '₹5',
   },
   {
     id: 2,
@@ -81,7 +81,7 @@ const mockCarpools = [
     destination: [51.52, -0.07],
     departureTime: '2023-07-25T09:00',
     seatsAvailable: 2,
-    costPerPerson: '$7',
+    costPerPerson: '₹7',
   },
   {
     id: 3,
@@ -90,7 +90,7 @@ const mockCarpools = [
     destination: [51.53, -0.09],
     departureTime: '2023-07-25T08:45',
     seatsAvailable: 4,
-    costPerPerson: '$4',
+    costPerPerson: '₹4',
   },
 ];
 
@@ -251,7 +251,7 @@ export default function CarpoolMap({ carpools = [], onBookRide }) {
                     <p className="text-sm">
                       Departure: {formatDate(carpool.departureTime)} <br />
                       Seats available: {carpool.seatsAvailable} <br />
-                      {carpool.costPerPerson && `Cost: ${carpool.costPerPerson}`}
+                      {carpool.costPerPerson && `Cost: ${carpool.costPerPerson.replace('$', '₹')}`}
                     </p>
                     <div className="flex flex-col gap-2 mt-2">
                       <button 

@@ -26,7 +26,7 @@ const mockCarpools = [
     destinationAddress: 'London Bridge',
     departureTime: '2023-07-25T08:30',
     seatsAvailable: 3,
-    costPerPerson: '$5',
+    costPerPerson: '₹5',
     vehicleType: 'Tesla Model 3',
   },
   {
@@ -38,7 +38,7 @@ const mockCarpools = [
     destinationAddress: 'Liverpool Street',
     departureTime: '2023-07-25T09:00',
     seatsAvailable: 2,
-    costPerPerson: '$7',
+    costPerPerson: '₹7',
     vehicleType: 'Toyota Prius',
   },
   {
@@ -50,7 +50,7 @@ const mockCarpools = [
     destinationAddress: 'King\'s Cross',
     departureTime: '2023-07-25T08:45',
     seatsAvailable: 4,
-    costPerPerson: '$4',
+    costPerPerson: '₹4',
     vehicleType: 'Honda Civic',
   },
 ];
@@ -667,7 +667,7 @@ export default function CarpoolPage() {
                               </p>
                             </div>
                             <div className="text-right">
-                              <span className="text-primary font-bold">{ride.costPerPerson || ride.cost ? `$${ride.cost}` : 'Free'}</span>
+                              <span className="text-primary font-bold">{ride.costPerPerson || ride.cost ? `₹${ride.cost}` : 'Free'}</span>
                               <p className="text-sm">{ride.seatsAvailable} seats</p>
                             </div>
                           </div>
@@ -801,7 +801,7 @@ export default function CarpoolPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Cost:</span>
-                <span className="font-medium">${bookingModal.ride.cost || bookingModal.ride.costPerPerson?.replace('$', '') || '0'}</span>
+                <span className="font-medium">₹{bookingModal.ride.cost || bookingModal.ride.costPerPerson?.replace('$', '').replace('₹', '') || '0'}</span>
               </div>
             </div>
             
