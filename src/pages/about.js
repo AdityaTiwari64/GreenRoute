@@ -108,18 +108,28 @@ export default function AboutPage() {
               {/* Team members would go here in a real app */}
               <div className="text-center">
                 <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
-                <h3 className="font-semibold">Jane Smith</h3>
-                <p className="text-gray-600 text-sm">CEO & Co-Founder</p>
+                <h3 className="font-semibold">Aditya Anil Tiwari</h3>
+                <p className="text-gray-600 text-sm">Tech-Lead</p>
               </div>
               <div className="text-center">
                 <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
-                <h3 className="font-semibold">John Doe</h3>
-                <p className="text-gray-600 text-sm">CTO & Co-Founder</p>
+                <h3 className="font-semibold">Rishi Raj</h3>
+                <p className="text-gray-600 text-sm">Manager</p>
               </div>
               <div className="text-center">
                 <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
-                <h3 className="font-semibold">Emma Johnson</h3>
-                <p className="text-gray-600 text-sm">Head of Sustainability</p>
+                <h3 className="font-semibold">Aniket Pandey</h3>
+                <p className="text-gray-600 text-sm">Developer</p>
+              </div>
+              <div className="text-center">
+                <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
+                <h3 className="font-semibold">Aanchal Rath</h3>
+                <p className="text-gray-600 text-sm">UI/UX Designer</p>
+              </div>
+              <div className="text-center">
+                <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
+                <h3 className="font-semibold">Vikramaditya Singh</h3>
+                <p className="text-gray-600 text-sm">Developer</p>
               </div>
             </div>
           </div>
