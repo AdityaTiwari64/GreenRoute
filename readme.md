@@ -5,7 +5,7 @@ GreenRoute is designed to promote sustainable transportation by connecting indiv
 
 
 
-##Feautures 
+## Feautures 
 
 ### Carpooling
 - Connect with colleagues and neighbors for shared rides
