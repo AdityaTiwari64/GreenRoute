@@ -1,6 +1,9 @@
-# GreenRoute: Sustainable Transportation Solution
 
-GreenRoute is a web application focused on making daily transportation more sustainable and efficient through carpooling optimization and smart parking solutions.
+# Green Route
+
+GreenRoute is designed to promote sustainable transportation by connecting individuals traveling in the same direction, allowing them to share rides. This approach not only reduces commuting costs but also minimizes environmental impact and fosters community connections.
+
+
 
 ## Features
 
@@ -10,18 +13,19 @@ GreenRoute is a web application focused on making daily transportation more sust
 - Reduce carbon emissions by sharing vehicles
 - Track your environmental impact over time
 
-### Smart Parking
-- Find available parking spaces in busy urban areas
-- Reserve spots in advance to save time and fuel
-- Filter parking spots by features (EV charging, handicap accessibility)
-- View real-time availability and pricing
+### Environmental Impact
 
-## Technology Stack
+GreenRoute helps reduce carbon emissions in two key ways:
 
-- **Frontend**: React.js with Next.js
+1. **Carpooling**: Each shared ride can reduce carbon emissions by up to 1kg CO2 per km compared to individual trips.
+2. **Smart Parking**: Reducing time spent searching for parking decreases fuel consumption and emissions.
+## Tech Stack
+
+- **Frontend**: React.js and Next.js
 - **UI**: Tailwind CSS
-- **Maps**: Leaflet and React Leaflet
-
+- **Maps**: Leaflet API Model + Google Maps API
+- **Backend** Node.js , Express.js and Firebase
+- **Deployment** Vercel 
 ## Getting Started
 
 ### Prerequisites
@@ -32,8 +36,9 @@ GreenRoute is a web application focused on making daily transportation more sust
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/eco-commute.git
-cd eco-commute
+git clone https://github.com/AdityaTiwari64/GreenRoute.git
+
+cd GreenRoute
 ```
 
 2. Install dependencies
@@ -51,14 +56,15 @@ yarn dev
 ```
 
 4. Open your browser and navigate to http://localhost:3000
+## Deployment
 
-## Environmental Impact
+To deploy this project run
 
-GreenRoute helps reduce carbon emissions in two key ways:
-
-1. **Carpooling**: Each shared ride can reduce carbon emissions by up to 1kg CO2 per km compared to individual trips.
-2. **Smart Parking**: Reducing time spent searching for parking decreases fuel consumption and emissions.
-
+```bash
+  npm run deploy
+```
+Direct Link:
+(https://green-route.vercel.app/)
 ## Future Enhancements
 
 - Mobile app with push notifications
@@ -73,4 +79,5 @@ We welcome contributions to make GreenRoute even better! Please feel free to sub
 
 ## License
 
-This project is licensed under the ISC License - see the LICENSE file for details.
+[MIT](https://choosealicense.com/licenses/mit/)
+
