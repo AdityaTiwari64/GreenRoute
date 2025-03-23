@@ -1,11 +1,17 @@
+![WhatsApp Image 2025-03-23 at 16 24 56_5edba300](https://github.com/user-attachments/assets/283e2b49-3428-422e-9466-230ab798edd3)
 
 # Green Route
 
 GreenRoute is designed to promote sustainable transportation by connecting individuals traveling in the same direction, allowing them to share rides. This approach not only reduces commuting costs but also minimizes environmental impact and fosters community connections.
 
+# Problem Statement (Why This Matters?)
+Urban transportation faces three critical challenges:
+Traffic congestion – Wasted time and increased stress.
+Excessive fuel consumption – More emissions, higher costs.
+Efficient parking & lack of EV infrastructure – Drivers struggle to find spots, and EV adoption remains slow.
 
 
-##Feautures 
+## Feautures 
 
 ### Carpooling
 - Connect with colleagues and neighbors for shared rides
