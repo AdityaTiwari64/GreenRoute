@@ -108,17 +108,17 @@ export default function AboutPage() {
               {/* Team members would go here in a real app */}
               <div className="text-center">
                 <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
-                <h3 className="font-semibold">Jane Smith</h3>
+                <h3 className="font-semibold">Rishi Raj</h3>
                 <p className="text-gray-600 text-sm">CEO & Co-Founder</p>
               </div>
               <div className="text-center">
                 <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
-                <h3 className="font-semibold">John Doe</h3>
+                <h3 className="font-semibold">Aditya Anil Tiwari</h3>
                 <p className="text-gray-600 text-sm">CTO & Co-Founder</p>
               </div>
               <div className="text-center">
                 <div className="bg-gray-200 rounded-full w-24 h-24 mx-auto mb-4"></div>
-                <h3 className="font-semibold">Emma Johnson</h3>
+                <h3 className="font-semibold">Vikramaditya Singh</h3>
                 <p className="text-gray-600 text-sm">Head of Sustainability</p>
               </div>
             </div>
